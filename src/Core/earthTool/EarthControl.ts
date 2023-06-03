@@ -1,0 +1,219 @@
+import { EarthTool } from './EarthTool';
+import { BuildTileTool } from './BuildTileTool';
+import { Camera3D, HoverCameraController, MeshRenderer, Vector2 } from '@orillusion/core';
+import { Mesh64RendererTest } from '../../Mesh64RendererTest';
+
+
+export class EarthControl {
+    scene: any;
+    rangeAera: number;
+    maxTilesCount: number;
+    tilesCount: number;
+    tilesRemoveCount: number;
+    level: number;
+    tiles: any[];
+    checkForTile: boolean;
+    stoprendering: boolean;
+    nVisible: number;
+    nHidden: number;
+    camera: any;
+
+    pixelXY: Vector2 | undefined;
+    tileXY: Vector2 | undefined;
+    tileInfo: any;
+    static TilesbyQuadKey: any;
+    _tileTexturCB: (() => void) | undefined;
+    topleftLatLon: Vector2 | undefined;
+    time: any;
+    checkInterval: any;
+    distance:any;
+    roll:any;
+    pitch:any;
+    controller: HoverCameraController;
+    constructor(scene: any,camera:Camera3D,controller:HoverCameraController) {
+        this.scene = scene,
+            this.rangeAera = 6,
+            this.maxTilesCount = 512,
+            this.tilesCount = 0,
+            this.tilesRemoveCount = 0,
+            this.level = 0,
+            this.tiles = [],
+            this.checkForTile = true,
+            this.stoprendering = false,
+            this.nVisible = 0,
+            this.nHidden = 0,
+            this.camera = camera,
+            this.drawMinimalEarth(),
+            EarthTool.SetLevel();
+            this.controller = controller;
+            this.tick(controller);
+            this.camera.onLateUpdate = ()=>{
+                this.distance = controller.distance;
+               this.roll = controller.roll;
+               this.pitch =  controller.pitch;
+             }
+             let timer: number | null | undefined = null;
+            this.camera.onUpdate = ()=>{
+                
+                if(this.distance != controller.distance||this.roll != controller.roll||this.pitch != controller.pitch ){
+                    if(timer){
+                        clearTimeout(timer);
+                    }
+                    timer = setTimeout(()=>{
+                                           this.tick(controller)
+        
+                        
+                },200)
+                }
+                
+                
+
+            }
+            // this.scene.registerBeforeRender(this._tick)
+            this.keyHelper(controller);
+    }
+
+    drawMinimalEarth() {
+        this.pixelXY = EarthTool.LatLongToPixelXY(90, -180, 3),
+            this.tileXY = EarthTool.PixelXYToTileXY(this.pixelXY.x, this.pixelXY.y),
+            this.tileInfo = EarthTool.ComputeVisibleTiles(this.tileXY.x, this.tileXY.y, 3, 8, false);
+        for (let t = 0; t < this.tileInfo.length; t++) {
+            if (void 0 !== EarthControl.TilesbyQuadKey[this.tileInfo[t].quadKey])
+                continue;
+            this._tileTexturCB = () => this.updateGeoInfo();
+            const i = new BuildTileTool(this.scene, this.tileInfo[t].quadKey, 360 / this.tileInfo[t].nFaces, 
+            this.tileInfo[t].offsetX, this.tileInfo[t].offsetY, 16, this.tileInfo[t].level, this.tileInfo[t].tileX, 
+            this.tileInfo[t].tileY, this._tileTexturCB);
+                this.tiles.push(i),
+                EarthControl.TilesbyQuadKey[this.tileInfo[t].quadKey] = i,
+                this.tilesCount++
+        }
+    }
+    tick(controller:HoverCameraController) {
+        this.level = this.getBestLevelResolution(controller);
+        this.level = Math.min(this.level, 22);
+        console.log("this.level",this.level)
+        this.getGeoInfo(this.level,controller)
+        // false ? (,
+        //     this.checkForTile = true) : true === this.checkForTile && (this.level = this.getBestLevelResolution(controller),
+        //         this.getGeoInfo(this.level,controller),
+        //         this.checkForTile = false)
+    }
+    getBestLevelResolution(controller:HoverCameraController) {
+        console.warn(`distance: ${controller.distance}`);
+        const e = EarthTool.MapNumberToInterval(controller.distance, 6378137, 10378137, 0, 20);
+        return EarthTool.GetBestLevelResolution(e, 929)
+    }
+
+    getGeoInfo(levelOfDetail:number,controller:HoverCameraController) {
+        const LatLong = EarthTool.CameraToLatlong(controller.roll, controller.pitch);
+
+        this.pixelXY = EarthTool.LatLongToPixelXY(LatLong.x, LatLong.y, levelOfDetail),
+            this.tileXY = EarthTool.PixelXYToTileXY(this.pixelXY.x, this.pixelXY.y),
+            this.tileInfo = EarthTool.ComputeVisibleTiles(this.tileXY.x, this.tileXY.y, levelOfDetail, this.rangeAera, true);
+
+        for (let n = 0; n < this.tileInfo.length; n++) {
+            if (EarthControl.TilesbyQuadKey[this.tileInfo[n].quadKey]!= undefined)
+                continue;
+            const t = new BuildTileTool(this.scene, this.tileInfo[n].quadKey, 360 / this.tileInfo[n].nFaces, 
+            this.tileInfo[n].offsetX, this.tileInfo[n].offsetY, 16, this.tileInfo[n].level, this.tileInfo[n].tileX, 
+            this.tileInfo[n].tileY, this._tileTexturCB);
+
+            this.tiles.push(t);
+                EarthControl.TilesbyQuadKey[this.tileInfo[n].quadKey] = t,
+                this.tilesCount++
+        }
+
+        this.topleftLatLon = void 0;
+            this.showHide(this.level);
+            // this.removeTile()
+    }
+    updateGeoInfo() {
+        this.time = Date.now(),
+            this.checkInterval || (this.checkInterval = setInterval(() => {
+                Date.now() - this.time >= 150 && (this.level = this.getBestLevelResolution(this.controller),
+                    this.getGeoInfo(this.level,this.controller),
+                    clearInterval(this.checkInterval),
+                    this.checkInterval = null)
+            }
+                , 150))
+    }
+    showHide(e:number) {
+        console.log(EarthControl.TilesbyQuadKey)
+
+        for (let t = 0; t < this.tiles.length; t++){
+            
+            if(this.tiles[t].level === e){
+                this.tiles[t].hasChild();
+                // for (const e in EarthControl.TilesbyQuadKey)
+                // e !== this.tiles[t].quadKey &&EarthControl.TilesbyQuadKey[e].quadKey.startsWith(this.tiles[t].quadKey)  && (EarthControl.TilesbyQuadKey[e].tile.visible = false)
+                // this.tiles[t].tile.visible = true;
+                // console.log(EarthControl.TilesbyQuadKey[e].quadKey  )
+                this.tiles[t].tile.getComponent(Mesh64RendererTest).enable = true;
+            } else {
+                // this.tiles[t].tile.visible = false;
+                this.tiles[t].tile.getComponent(Mesh64RendererTest).enable = false;
+            }
+        }
+            
+    }
+    removeTile() {
+        for (; this.tilesCount >= this.maxTilesCount;) {
+            let t = this.tiles.shift();
+            if (t.lock) {
+                this.tiles.push(t);
+                continue
+            }
+            t.tile.dispose(true, true),
+                this.tilesCount--,
+                this.tilesRemoveCount++;
+            const i = t.quadKey;
+            t = null,
+                EarthControl.TilesbyQuadKey[i] = null,
+                delete EarthControl.TilesbyQuadKey[i]
+        }
+    }
+    removeAllTile() {
+        for (; this.tilesCount > 0;) {
+            let t = this.tiles.shift();
+            if (t) {
+                t.tile.dispose(true, true),
+                    this.tilesCount--;
+                const i = t.quadKey;
+                t = null,
+                    EarthControl.TilesbyQuadKey[i] = null,
+                    delete EarthControl.TilesbyQuadKey[i]
+            }
+        }
+    }
+    getUperLeftLatlong() {
+        const e = this.scene.pick(0, 0);
+        return e.hit ? (this.topleftLatLon = EarthTool.Vec3ToLatLong(e.pickedPoint, false),
+            this.topleftLatLon) : null
+    }
+
+    keyHelper(controller:HoverCameraController) {
+        // this.scene.actionManager = new BABYLON.ActionManager(this.scene),
+        //     this.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, e => {
+        //         const t = e.sourceEvent.key;
+        //         if (this.level = this.getBestLevelResolution(controller),
+        //             "a" === t) {
+        //             this.stoprendering = true;
+        //             for (let e = 0; e < this.tiles.length; e++)
+        //                 this.tiles[e].level === this.level || this.tiles[e].level === this.level - 1 || (this.tiles[e].tile.isVisible = false)
+        //         }
+        //         if ("z" === t) {
+        //             this.stoprendering = false;
+        //             for (let e = 0; e < this.tiles.length; e++)
+        //                 this.tiles[e].tile.isVisible = true
+        //         }
+        //         "e" === t && (this.removeAllTile(),
+        //             tileTexture.PROVIDER++,
+        //             this.level = this.getBestLevelResolution(),
+        //             this.getGeoInfo(this.level))
+        //     }
+        //     ))
+    }
+
+}
+EarthControl.TilesbyQuadKey = [];

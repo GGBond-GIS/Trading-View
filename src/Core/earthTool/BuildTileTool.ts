@@ -1,0 +1,143 @@
+import { Engine3D, GPUCullMode, GPUPrimitiveTopology, LitMaterial, GPUAddressMode, MeshRenderer, Object3D, PlaneGeometry, Scene3D, Vector3, Color, VertexAttributeName, UnLitMaterial } from "@orillusion/core";
+import { EarthTool } from "./EarthTool";
+import { EarthControl } from "./EarthControl";
+import { Float64TestMaterial } from "../../Float64TestMaterial";
+import { Mesh64RendererTest } from "../../Mesh64RendererTest";
+
+export class BuildTileTool {
+  public scene: Scene3D
+  quadKey: any;
+  size: number;
+  offsetX: any;
+  offsetY: number;
+  subd: number;
+  tileX: number;
+  level: number;
+  cb: any;
+  j: number;
+  tileMapLoaded: boolean;
+  isReady: boolean;
+  lock: boolean;
+  useShader: boolean;
+  tile: Object3D;
+  constructor(scene: Scene3D, quadKey: number, size: number, offsetX: number, offsetY: number, subd: number, level: number, tileX: number, tileY: number, l: any) {
+    this.scene = scene;
+    this.quadKey = quadKey;
+    this.size = size;
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+    this.subd = subd;
+    this.level = level;
+    this.tileX = tileX;
+    this.j = tileY;
+    this.cb = l;
+    this.tileMapLoaded = false;
+    this.isReady = false;
+    this.lock = false;
+    this.useShader = true;
+    // 3 === this.level && (this.lock = true);
+    this.tile = BuildTileTool.builTile(this.scene, this.size, offsetX, offsetY, level, tileX, tileY);
+    this.useShader
+
+  }
+  public static builTile(scene: Scene3D, size: number, offsetX: number, offsetY: number, level: number, tileX: number, tileY: number) {
+    // 新建对象
+    const obj: Object3D = new Object3D();
+    // 为对象添 MeshRenderer
+    let geometry = new PlaneGeometry(size, size, 10, 10);
+    let VerticesData = geometry.getAttribute(VertexAttributeName.position).data;
+    let lownom = new Float32Array(VerticesData.length);
+    const t = VerticesData.length / 3;
+    for (let i = 0; i < t; i++) {
+        let t = VerticesData[3 * i] + offsetX;
+        const n = VerticesData[3 * i + 1];
+        let r = VerticesData[3 * i + 2] - offsetY;
+        t = EarthTool.MapNumberToInterval(t, -180, 180, -EarthTool.EPSG3857_MAX_BOUND, EarthTool.EPSG3857_MAX_BOUND);
+        r = EarthTool.MapNumberToInterval(r, -180, 180, -EarthTool.EPSG3857_MAX_BOUND, EarthTool.EPSG3857_MAX_BOUND);
+        const o = EarthTool.InverseWebMercator(t, r, n);
+        const s = this.spherify(o.x, o.z);
+
+        VerticesData[3 * i] = BuildTileTool.SplitDouble(-s.x)[0];
+        lownom[3 * i] = BuildTileTool.SplitDouble(-s.x)[1];
+
+        VerticesData[3 * i + 1] = BuildTileTool.SplitDouble(-s.y)[0];
+        lownom[3 * i + 1] = BuildTileTool.SplitDouble(-s.y)[1];
+
+        VerticesData[3 * i + 2] = BuildTileTool.SplitDouble(s.z)[0];
+        lownom[3 * i + 2] = BuildTileTool.SplitDouble(s.z)[1];
+        
+      }
+
+
+    let mr: Mesh64RendererTest = obj.addComponent(Mesh64RendererTest);
+    // 设置几何体
+    mr.geometry = geometry;
+    mr.geometry.setAttribute(VertexAttributeName.normal, lownom);
+
+    console.log("PlaneGeometry", geometry.getAttribute(VertexAttributeName.position).data,geometry.getAttribute(VertexAttributeName.normal).data);
+    // 设置材质
+    console.warn(`level: ${level}`);
+    mr.material = new Float64TestMaterial();
+    // let texture = Engine3D.res.loadTexture("//mt1.google.com/vt/lyrs=m&hl=en&x=" + tileX + "&y=" + tileY + "&z=" + level);
+    let texture = Engine3D.res.loadTexture(`http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${tileX}&y=${tileY}&z=${level}`);
+
+ 
+    texture.then((res) => {
+      res.addressModeU = GPUAddressMode.clamp_to_edge;
+      res.addressModeV = GPUAddressMode.clamp_to_edge;
+      mr.material.baseMap = res;
+
+    })
+
+    // mr.material.shaderState.topology = GPUPrimitiveTopology.line_list;
+    mr.material.transparent = false;
+    // mr.material.cullMode = GPUCullMode.none;
+    (window as any).arr.push(mr.geometry);
+    scene.addChild(obj);
+    return obj;
+  }
+  tileTexturCB() {
+    this.tileMapLoaded = true,
+      this.cb()
+  }
+  hasChild() {
+
+
+    for (const e in EarthControl.TilesbyQuadKey) {
+      if (e !== this.quadKey) {
+
+        if (EarthControl.TilesbyQuadKey[e].quadKey.startsWith(this.quadKey)) {
+          // EarthControl.TilesbyQuadKey[e].tile.visible = true;
+          EarthControl.TilesbyQuadKey[e].tile.visible = false;
+
+
+
+        }
+        if (this.quadKey.startsWith(EarthControl.TilesbyQuadKey[e].quadKey)) {
+          EarthControl.TilesbyQuadKey[e].tile.visible = false;
+          if (this.quadKey.slice(0, this.quadKey.length - 2) == EarthControl.TilesbyQuadKey[e].quadKey || this.quadKey.slice(0, this.quadKey.length - 1) == EarthControl.TilesbyQuadKey[e].quadKey) {
+            console.log(this.quadKey.slice(0, this.quadKey.length - 2), this.quadKey, EarthControl.TilesbyQuadKey[e].quadKey);
+
+            EarthControl.TilesbyQuadKey[e].tile.isVisible = true;
+
+          }
+        }
+      }
+    }
+    //  .startsWith() 
+    // ()
+    // console.log("EarthControl.TilesbyQuadKey[e].quadKey",EarthControl.TilesbyQuadKey[e].quadKey,this.quadKey);
+  }
+  public static spherify(e: number, t: number) {
+    const n = (90 - t) / 180 * Math.PI
+      , r = e / 180 * Math.PI;
+    return new Vector3(6378137.0 * Math.sin(n) * Math.cos(r), 6378137.0 * Math.cos(n), 6356752.314245 * Math.sin(n) * Math.sin(r))
+  }
+
+  public static SplitDouble(value: number): number[] {
+    let hi = Float32Array.from([value])[0];
+    let low = value - hi;
+    return [hi, low];
+  }
+
+}
