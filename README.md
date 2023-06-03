@@ -17,7 +17,7 @@ yarn dev//或 npm run dev
 
 这里是Orillusion帮助解决的，在星球的尺度上也能正常渲染不限于GPU只支持的21公里
 
-<img src="G:\Orillusion\Orillusion_TileEarth\public\img\20230603181057.png" style="zoom:25%;" /><img src="./public/img/20230603181132.png" style="zoom:25%;" />
+<img src="./public/img/20230603181057.png" style="zoom:25%;" /><img src="./public/img/20230603181132.png" style="zoom:25%;" />
 
 ## 地图瓦片系统
 
