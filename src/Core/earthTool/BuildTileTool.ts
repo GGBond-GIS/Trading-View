@@ -78,8 +78,7 @@ export class BuildTileTool {
     // 设置材质
     console.warn(`level: ${level}`);
     mr.material = new Float64TestMaterial();
-    // let texture = Engine3D.res.loadTexture("//mt1.google.com/vt/lyrs=m&hl=en&x=" + tileX + "&y=" + tileY + "&z=" + level);
-    let texture = Engine3D.res.loadTexture(`http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${tileX}&y=${tileY}&z=${level}`);
+    let texture = Engine3D.res.loadTexture("//mt1.google.com/vt/lyrs=m&hl=en&x=" + tileX + "&y=" + tileY + "&z=" + level);
 
  
     texture.then((res) => {
