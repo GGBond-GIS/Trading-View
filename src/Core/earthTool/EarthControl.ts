@@ -92,17 +92,12 @@ export class EarthControl {
     tick(controller:HoverCameraController) {
         this.level = this.getBestLevelResolution(controller);
         this.level = Math.min(this.level, 22);
-        console.log("this.level",this.level)
         this.getGeoInfo(this.level,controller)
-        // false ? (,
-        //     this.checkForTile = true) : true === this.checkForTile && (this.level = this.getBestLevelResolution(controller),
-        //         this.getGeoInfo(this.level,controller),
-        //         this.checkForTile = false)
     }
     getBestLevelResolution(controller:HoverCameraController) {
         console.warn(`distance: ${controller.distance}`);
-        const e = EarthTool.MapNumberToInterval(controller.distance, 6378137, 10378137, 0, 20);
-        return EarthTool.GetBestLevelResolution(e, 929)
+        const e = EarthTool.MapNumberToInterval(controller.distance, 6378137, 10378137, 0, 50);
+        return EarthTool.GetBestLevelResolution(e, 1080)
     }
 
     getGeoInfo(levelOfDetail:number,controller:HoverCameraController) {
@@ -126,7 +121,7 @@ export class EarthControl {
 
         this.topleftLatLon = void 0;
             this.showHide(this.level);
-            // this.removeTile()
+            this.removeTile()
     }
     updateGeoInfo() {
         this.time = Date.now(),
@@ -180,26 +175,7 @@ export class EarthControl {
     }
 
     keyHelper(controller:HoverCameraController) {
-        // this.scene.actionManager = new BABYLON.ActionManager(this.scene),
-        //     this.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, e => {
-        //         const t = e.sourceEvent.key;
-        //         if (this.level = this.getBestLevelResolution(controller),
-        //             "a" === t) {
-        //             this.stoprendering = true;
-        //             for (let e = 0; e < this.tiles.length; e++)
-        //                 this.tiles[e].level === this.level || this.tiles[e].level === this.level - 1 || (this.tiles[e].tile.isVisible = false)
-        //         }
-        //         if ("z" === t) {
-        //             this.stoprendering = false;
-        //             for (let e = 0; e < this.tiles.length; e++)
-        //                 this.tiles[e].tile.isVisible = true
-        //         }
-        //         "e" === t && (this.removeAllTile(),
-        //             tileTexture.PROVIDER++,
-        //             this.level = this.getBestLevelResolution(),
-        //             this.getGeoInfo(this.level))
-        //     }
-        //     ))
+
     }
 
 }

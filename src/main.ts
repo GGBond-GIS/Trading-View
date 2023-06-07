@@ -16,7 +16,7 @@ async function demo() {
 	let cameraObj: Object3D = new Object3D();
 	let camera = cameraObj.addComponent(Camera3D);
 	// 调整摄像机视角
-	camera.perspective(60, Engine3D.aspect, 2, 16478137.0);
+	camera.perspective(60, Engine3D.aspect, 0.001, 4096.0);
 	// 设置相机控制器
 	let controller = (window as any).controller = camera.object3D.addComponent(HoverCameraController);
 	controller.minDistance = 6364800.305402854;

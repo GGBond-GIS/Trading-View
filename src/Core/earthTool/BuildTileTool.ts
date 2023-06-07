@@ -89,7 +89,7 @@ export class BuildTileTool {
 
     })
 
-    // mr.material.shaderState.topology = GPUPrimitiveTopology.line_list;
+    mr.material.shaderState.topology = GPUPrimitiveTopology.line_list;
     mr.material.transparent = false;
     // mr.material.cullMode = GPUCullMode.none;
     (window as any).arr.push(mr.geometry);
