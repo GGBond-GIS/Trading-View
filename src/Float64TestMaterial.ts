@@ -70,6 +70,17 @@ export class Float64TestMaterial extends MaterialBase {
         @group(2) @binding(0)
         var<uniform> args: MVPMatrix;
 
+        fn applyLogarithmicDepth(
+            clipPosition: vec4<f32>,
+            logarithmicDepthConstant: f32,
+            perspectiveFarPlaneDistance: f32) -> vec4<f32>
+       {
+           let z = ((2.0 * log((logarithmicDepthConstant * clipPosition.z) + 1.0) / 
+                          log((logarithmicDepthConstant * perspectiveFarPlaneDistance) + 1.0)) - 1.0) * clipPosition.w;
+       
+           return vec4<f32>(clipPosition.x,clipPosition.y,z,clipPosition.w);
+       }
+       
         @vertex
         fn VertMain( in: VertexInput ) -> VertexOutput {
             let position_h = in.position;
@@ -83,7 +94,9 @@ export class Float64TestMaterial extends MaterialBase {
             out.uv = in.uv;
             out.color = vec4<f32>(1, 1, 1, 1);
             // out.worldPos = worldPos;
-            out.member = clipPosition;
+            out.member = applyLogarithmicDepth(clipPosition,1.0,16478137.0);
+
+            // out.member = clipPosition;
             return out;
 
             // // let ORI_MATRIX_M = models.matrix[u32(in.index)];

@@ -101,32 +101,8 @@ export class BuildTileTool {
       this.cb()
   }
   hasChild() {
-
-
-    for (const e in EarthControl.TilesbyQuadKey) {
-      if (e !== this.quadKey) {
-
-        if (EarthControl.TilesbyQuadKey[e].quadKey.startsWith(this.quadKey)) {
-          // EarthControl.TilesbyQuadKey[e].tile.visible = true;
-          EarthControl.TilesbyQuadKey[e].tile.visible = false;
-
-
-
-        }
-        if (this.quadKey.startsWith(EarthControl.TilesbyQuadKey[e].quadKey)) {
-          EarthControl.TilesbyQuadKey[e].tile.visible = false;
-          if (this.quadKey.slice(0, this.quadKey.length - 2) == EarthControl.TilesbyQuadKey[e].quadKey || this.quadKey.slice(0, this.quadKey.length - 1) == EarthControl.TilesbyQuadKey[e].quadKey) {
-            console.log(this.quadKey.slice(0, this.quadKey.length - 2), this.quadKey, EarthControl.TilesbyQuadKey[e].quadKey);
-
-            EarthControl.TilesbyQuadKey[e].tile.isVisible = true;
-
-          }
-        }
-      }
-    }
-    //  .startsWith() 
-    // ()
-    // console.log("EarthControl.TilesbyQuadKey[e].quadKey",EarthControl.TilesbyQuadKey[e].quadKey,this.quadKey);
+    for (const e in EarthControl.TilesbyQuadKey)
+    e !== this.quadKey && EarthControl.TilesbyQuadKey[e].quadKey.startsWith(this.quadKey) && (EarthControl.TilesbyQuadKey[e].tile.getComponent(Mesh64RendererTest).enable = false);
   }
   public static spherify(e: number, t: number) {
     const n = (90 - t) / 180 * Math.PI

@@ -139,22 +139,9 @@ export class EarthControl {
                 , 150))
     }
     showHide(e:number) {
-        console.log(EarthControl.TilesbyQuadKey)
-
-        for (let t = 0; t < this.tiles.length; t++){
-            
-            if(this.tiles[t].level === e){
-                this.tiles[t].hasChild();
-                // for (const e in EarthControl.TilesbyQuadKey)
-                // e !== this.tiles[t].quadKey &&EarthControl.TilesbyQuadKey[e].quadKey.startsWith(this.tiles[t].quadKey)  && (EarthControl.TilesbyQuadKey[e].tile.visible = false)
-                // this.tiles[t].tile.visible = true;
-                // console.log(EarthControl.TilesbyQuadKey[e].quadKey  )
-                this.tiles[t].tile.getComponent(Mesh64RendererTest).enable = true;
-            } else {
-                // this.tiles[t].tile.visible = false;
-                this.tiles[t].tile.getComponent(Mesh64RendererTest).enable = false;
-            }
-        }
+        for (let t = 0; t < this.tiles.length; t++)
+        this.tiles[t].level === e && (this.tiles[t].hasChild(),
+            this.tiles[t].tile.getComponent(Mesh64RendererTest).enable = true)
             
     }
     removeTile() {
