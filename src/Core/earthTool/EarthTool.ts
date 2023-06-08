@@ -64,8 +64,6 @@ export class EarthTool {
         let n =  -alpha
         
         let r = (beta / 180 * Math.PI +( Math.PI/2)) % EarthTool.PIX2
-        console.log(n,"111111111111111111111111")
-        console.log(r,"111111111111111111111111")
 
         return r < 0 && (r += EarthTool.PIX2),
             r *= 180 / Math.PI,
