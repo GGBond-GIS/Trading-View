@@ -13,7 +13,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "@orillusion/core": "^0.6.2",
+    "@orillusion/core": "^0.6.4",
     "@orillusion/stats": "^0.2.0",
     "proj4": "^2.9.0",
     "three": "^0.151.2"

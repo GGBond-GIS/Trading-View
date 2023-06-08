@@ -15,7 +15,6 @@ export class Mesh64RendererTest extends MeshRenderer {
     private cameraPos_l: Vector3 = new Vector3();
     private matrixMVP_RTE: Matrix4 = new Matrix4();
     public onUpdate(view: View3D) {
-        let modelMat = this.transform.worldMatrix;
         let viewMat = view.camera.viewMatrix;
         let projMat = view.camera.projectionMatrix;
 
@@ -26,10 +25,10 @@ export class Mesh64RendererTest extends MeshRenderer {
         this.cameraPos_h.set(cameraPos_xHL[0], cameraPos_yHL[0], cameraPos_zHL[0]);
         this.cameraPos_l.set(cameraPos_xHL[1], cameraPos_yHL[1], cameraPos_zHL[1]);
         this.mVPMatrix_64.setVector3('cameraPos_h', this.cameraPos_h);
-        this.mVPMatrix_64.setFloat('retain0', 0);
+        this.mVPMatrix_64.setFloat('retain0', .0);
 
         this.mVPMatrix_64.setVector3('cameraPos_l', this.cameraPos_l);
-        this.mVPMatrix_64.setFloat('retain1', 0);
+        this.mVPMatrix_64.setFloat('retain1', .0);
 
         let mv = Matrix4.help_matrix_0;
         mv.copyFrom(viewMat);

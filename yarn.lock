@@ -153,7 +153,7 @@
   resolved "https://registry.npmmirror.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@orillusion/core@^0.6.0", "@orillusion/core@^0.6.2":
+"@orillusion/core@^0.6.0":
   version "0.6.3"
   resolved "https://registry.npmjs.org/@orillusion/core/-/core-0.6.3.tgz"
   integrity sha512-jclgrBHuRFzE1LTwVKmOzT18Kwtjzp4euNBEKYnx7z+ucwWNUnZhFRNp8ZESFMA+98M01EMqfzSr1T24gXk6Mg==
@@ -162,6 +162,11 @@
     electron "25.0.0-beta.8"
     uglify-js "^3.17.4"
     xvfb-maybe "^0.2.1"
+
+"@orillusion/core@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.npmjs.org/@orillusion/core/-/core-0.6.4.tgz#6c964e83abaaddcb87c915cce4f60174efc5a853"
+  integrity sha512-AXylQWO/GN/deQSJsU9HP/+kaoDlmHnLKmhI3WR3NeOOx+Pi2k1jq5ajc7fh2YZEyTwMgwNkrte3EuarsJDmKw==
 
 "@orillusion/stats@^0.2.0":
   version "0.2.0"

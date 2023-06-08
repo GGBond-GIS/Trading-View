@@ -4,6 +4,7 @@ import { GUI } from "https://npm.elemecdn.com/dat.gui@0.7.9/build/dat.gui.module
 
 import { Engine3D, Scene3D, Object3D, Camera3D, DirectLight, HoverCameraController, Color, View3D, SolidColorSky, SkyRenderer, MeshRenderer, GeometryBase, VertexAttributeName, UnLitMaterial, GPUPrimitiveTopology } from "@orillusion/core";
 import { Float64TestMaterial } from './Float64TestMaterial';
+import { Mesh64RendererTest } from './Mesh64RendererTest';
 async function demo() {
 	(window as any).arr = [];
 	// 初始化引擎
@@ -16,7 +17,7 @@ async function demo() {
 	let cameraObj: Object3D = new Object3D();
 	let camera = cameraObj.addComponent(Camera3D);
 	// 调整摄像机视角
-	camera.perspective(60, Engine3D.aspect, 0.001, 4096.0);
+	camera.perspective(60, Engine3D.aspect, 0.001, 40960000.0);
 	// 设置相机控制器
 	let controller = (window as any).controller = camera.object3D.addComponent(HoverCameraController);
 	controller.minDistance = 6364800.305402854;

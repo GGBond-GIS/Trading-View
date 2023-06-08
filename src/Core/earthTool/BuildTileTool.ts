@@ -44,7 +44,7 @@ export class BuildTileTool {
     // 新建对象
     const obj: Object3D = new Object3D();
     // 为对象添 MeshRenderer
-    let geometry = new PlaneGeometry(size, size, 10, 10);
+    let geometry = new PlaneGeometry(size, size,level>4?10:40, level>4?10:40);
     let VerticesData = geometry.getAttribute(VertexAttributeName.position).data;
     let lownom = new Float32Array(VerticesData.length);
     const t = VerticesData.length / 3;
@@ -56,16 +56,12 @@ export class BuildTileTool {
         r = EarthTool.MapNumberToInterval(r, -180, 180, -EarthTool.EPSG3857_MAX_BOUND, EarthTool.EPSG3857_MAX_BOUND);
         const o = EarthTool.InverseWebMercator(t, r, n);
         const s = this.spherify(o.x, o.z);
-
         VerticesData[3 * i] = BuildTileTool.SplitDouble(-s.x)[0];
         lownom[3 * i] = BuildTileTool.SplitDouble(-s.x)[1];
-
         VerticesData[3 * i + 1] = BuildTileTool.SplitDouble(-s.y)[0];
         lownom[3 * i + 1] = BuildTileTool.SplitDouble(-s.y)[1];
-
         VerticesData[3 * i + 2] = BuildTileTool.SplitDouble(s.z)[0];
         lownom[3 * i + 2] = BuildTileTool.SplitDouble(s.z)[1];
-        
       }
 
 
@@ -74,9 +70,7 @@ export class BuildTileTool {
     mr.geometry = geometry;
     mr.geometry.setAttribute(VertexAttributeName.normal, lownom);
 
-    console.log("PlaneGeometry", geometry.getAttribute(VertexAttributeName.position).data,geometry.getAttribute(VertexAttributeName.normal).data);
     // 设置材质
-    console.warn(`level: ${level}`);
     mr.material = new Float64TestMaterial();
     // let texture = Engine3D.res.loadTexture("//mt1.google.com/vt/lyrs=m&hl=en&x=" + tileX + "&y=" + tileY + "&z=" + level);
     let texture = Engine3D.res.loadTexture(`http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${tileX}&y=${tileY}&z=${level}`);
@@ -89,10 +83,9 @@ export class BuildTileTool {
 
     })
 
-    mr.material.shaderState.topology = GPUPrimitiveTopology.line_list;
+    // mr.material.shaderState.topology = GPUPrimitiveTopology.line_list;
     mr.material.transparent = false;
     // mr.material.cullMode = GPUCullMode.none;
-    (window as any).arr.push(mr.geometry);
     scene.addChild(obj);
     return obj;
   }
