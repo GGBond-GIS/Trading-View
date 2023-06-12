@@ -3,8 +3,7 @@ import { EarthControl } from './Core/earthTool/EarthControl';
 import { GUI } from "https://npm.elemecdn.com/dat.gui@0.7.9/build/dat.gui.module.js"
 
 import { Engine3D, Scene3D, Object3D, Camera3D, DirectLight, HoverCameraController, Color, View3D, SolidColorSky, SkyRenderer, MeshRenderer, GeometryBase, VertexAttributeName, UnLitMaterial, GPUPrimitiveTopology } from "@orillusion/core";
-import { Float64TestMaterial } from './Float64TestMaterial';
-import { Mesh64RendererTest } from './Mesh64RendererTest';
+
 async function demo() {
 	(window as any).arr = [];
 	// 初始化引擎
