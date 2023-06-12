@@ -54,9 +54,7 @@ export class Float64TestMaterial extends MaterialBase {
 
         struct MVPMatrix {
             cameraPos_h: vec3<f32>,
-            // retain0: f32,
             cameraPos_l: vec3<f32>,
-            // retain1: f32,
             matrixMVP_RTE: mat4x4<f32>,
         };
         

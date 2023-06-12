@@ -1,4 +1,4 @@
-import { Engine3D, GPUCullMode, GPUPrimitiveTopology, LitMaterial, GPUAddressMode, MeshRenderer, Object3D, PlaneGeometry, Scene3D, Vector3, Color, VertexAttributeName, UnLitMaterial } from "@orillusion/core";
+import { Engine3D,  GPUAddressMode, Object3D, PlaneGeometry, Scene3D, Vector3, VertexAttributeName  } from "@orillusion/core";
 import { EarthTool } from "./EarthTool";
 import { EarthControl } from "./EarthControl";
 import { Float64TestMaterial } from "../../Float64TestMaterial";

@@ -1,4 +1,4 @@
-import { ClusterLightingBuffer, Color, Matrix4, MeshRenderer, RendererMask, RendererPassState, RendererType, UniformGPUBuffer, Vector3, View3D } from "@orillusion/core";
+import { ClusterLightingBuffer, Matrix4, MeshRenderer, RendererPassState, RendererType, UniformGPUBuffer, Vector3, View3D } from "@orillusion/core";
 import { BuildTileTool } from "./Core/earthTool/BuildTileTool";
 
 export class Mesh64RendererTest extends MeshRenderer {

@@ -1,6 +1,6 @@
 import { EarthTool } from './EarthTool';
 import { BuildTileTool } from './BuildTileTool';
-import { Camera3D, HoverCameraController, MeshRenderer, Vector2 } from '@orillusion/core';
+import { Camera3D, HoverCameraController, Vector2 } from '@orillusion/core';
 import { Mesh64RendererTest } from '../../Mesh64RendererTest';
 
 
@@ -52,7 +52,7 @@ export class EarthControl {
                this.roll = controller.roll;
                this.pitch =  controller.pitch;
              }
-             let timer: number | null | undefined = null;
+             let timer: any = null;
             this.camera.onUpdate = ()=>{
                 
                 if(this.distance != controller.distance||this.roll != controller.roll||this.pitch != controller.pitch ){

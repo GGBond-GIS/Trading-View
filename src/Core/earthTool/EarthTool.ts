@@ -49,21 +49,17 @@ export class EarthTool {
                 const quadKey = EarthTool.TileXYToQuadKey(tileX, tileY, level);
                 tileArr.push(new Tile(offsetX, offsetY, level, tileX, tileY, nFaces, quadKey))
             }
-            console.log(tileArr,"tileArr");
-            tileArr.forEach((res)=>{
-
-              if(res.nFaces!= 8 )
-              {
-                console.log(111111111111111);
-              }
-            })
+        tileArr.forEach((res) => {
+            if (res.nFaces != 8) {
+            }
+        })
         return tileArr
     }
     static CameraToLatlong(beta: number, alpha: number) {
         Math;
-        let n =  -alpha
-        
-        let r = (beta / 180 * Math.PI +( Math.PI/2)) % EarthTool.PIX2
+        let n = -alpha
+
+        let r = (beta / 180 * Math.PI + (Math.PI / 2)) % EarthTool.PIX2
 
         return r < 0 && (r += EarthTool.PIX2),
             r *= 180 / Math.PI,
@@ -81,7 +77,7 @@ export class EarthTool {
         for (o = 0; o < EarthTool.Levels.length; o++)
             if (r * EarthTool.Levels[o] >= n)
                 return 0 === o ? 1 : o;
-                console.log(this.Levels.length, window.devicePixelRatio)
+        console.log(this.Levels.length, window.devicePixelRatio)
         return o - 1
     }
     static LatLongToVec3(t: number, i: number, n: any) {
@@ -105,53 +101,49 @@ export class EarthTool {
     static MapNumberToInterval(distance: number, t: number, i: number, n: number, r: number) {
         return (distance - t) * (r - n) / (i - t) + n
     }
-    public static  GroundResolution( latitude:number,  levelOfDetail:number)  
-    {  
-        return latitude = this.Clip(latitude, this.MinLatitude, this.MaxLatitude), 
-         Math.cos(latitude * Math.PI / 180) * 2 * Math.PI * this.EarthRadius / this.MapSize(levelOfDetail);  
-    } 
-    public static LatLongToPixelXY( latitude:number,  longitude:number,  levelOfDetail:number)  
-    {  
-        latitude = this.Clip(latitude, this.MinLatitude, this.MaxLatitude);  
-        longitude = this.Clip(longitude, this.MinLongitude, this.MaxLongitude);  
+    public static GroundResolution(latitude: number, levelOfDetail: number) {
+        return latitude = this.Clip(latitude, this.MinLatitude, this.MaxLatitude),
+            Math.cos(latitude * Math.PI / 180) * 2 * Math.PI * this.EarthRadius / this.MapSize(levelOfDetail);
+    }
+    public static LatLongToPixelXY(latitude: number, longitude: number, levelOfDetail: number) {
+        latitude = this.Clip(latitude, this.MinLatitude, this.MaxLatitude);
+        longitude = this.Clip(longitude, this.MinLongitude, this.MaxLongitude);
 
-        let x = (longitude + 180) / 360;   
-        let sinLatitude = Math.sin(latitude * Math.PI / 180);  
-        let y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);  
+        let x = (longitude + 180) / 360;
+        let sinLatitude = Math.sin(latitude * Math.PI / 180);
+        let y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
 
-        let mapSize = this.MapSize(levelOfDetail);  
-       let pixelX = this.Clip(x * mapSize + 0.5, 0, mapSize - 1);  
-       let pixelY = this.Clip(y * mapSize + 0.5, 0, mapSize - 1);  
-       return new Vector2(pixelX,pixelY);
-    }  
-    static Clip( n:number,  minValue:number,  maxValue:number)  {  
-        return Math.min(Math.max(n, minValue), maxValue);  
-    }  
-    static PixelXYToTileXY(pixelX:number,  pixelY:number){  
-        let tileX = parseInt((pixelX / 256).toString());  
-        let tileY = parseInt((pixelY / 256).toString());  
-        return new Vector2(tileX,tileY)
-     }  
-     public static  PixelXYToLatLong( pixelX:number,  pixelY:number,  levelOfDetail:number)  
-     {  
-         let mapSize = this.MapSize(levelOfDetail);  
-         let x = (this.Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;  
-         let y = 0.5 - (this.Clip(pixelY, 0, mapSize - 1) / mapSize);  
+        let mapSize = this.MapSize(levelOfDetail);
+        let pixelX = this.Clip(x * mapSize + 0.5, 0, mapSize - 1);
+        let pixelY = this.Clip(y * mapSize + 0.5, 0, mapSize - 1);
+        return new Vector2(pixelX, pixelY);
+    }
+    static Clip(n: number, minValue: number, maxValue: number) {
+        return Math.min(Math.max(n, minValue), maxValue);
+    }
+    static PixelXYToTileXY(pixelX: number, pixelY: number) {
+        let tileX = parseInt((pixelX / 256).toString());
+        let tileY = parseInt((pixelY / 256).toString());
+        return new Vector2(tileX, tileY)
+    }
+    public static PixelXYToLatLong(pixelX: number, pixelY: number, levelOfDetail: number) {
+        let mapSize = this.MapSize(levelOfDetail);
+        let x = (this.Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;
+        let y = 0.5 - (this.Clip(pixelY, 0, mapSize - 1) / mapSize);
 
-        let latitude = 90 - 360 * Math.atan(Math.exp(-y * 2 * Math.PI)) / Math.PI;  
-        let  longitude = 360 * x;  
-         return new Vector2(latitude,longitude)
-     }  
+        let latitude = 90 - 360 * Math.atan(Math.exp(-y * 2 * Math.PI)) / Math.PI;
+        let longitude = 360 * x;
+        return new Vector2(latitude, longitude)
+    }
 
-    static  MapSize(levelOfDetail:number )  
-        {  
-            return  256 << levelOfDetail;  
-        }  
-        static TileXYToPixelXY(tileX:number ,  tileY:number)  {  
-            let pixelX = tileX * 256;  
-            let pixelY = tileY * 256;  
-            return new Vector2(pixelX,pixelY)
-         }  
+    static MapSize(levelOfDetail: number) {
+        return 256 << levelOfDetail;
+    }
+    static TileXYToPixelXY(tileX: number, tileY: number) {
+        let pixelX = tileX * 256;
+        let pixelY = tileY * 256;
+        return new Vector2(pixelX, pixelY)
+    }
     // static GetDistanceFromLatLonInKm(t: number, i: number, n: number, r: number) {
     //     const o = EarthTool.EarthRadius / 1e3
     //         , s = EarthTool.Deg2rad(n - t)
@@ -162,30 +154,25 @@ export class EarthTool {
     // static Deg2rad(e: number) {
     //     return e * (Math.PI / 180)
     // }
-    static TileXYToQuadKey(tileX:number,  tileY:number,  levelOfDetail:number)  
-        {  
-            let quadKey = '';  
-            for (let i = levelOfDetail; i > 0; i--)  
-            {  
-                let digit = 0;  
-                let mask = 1 << (i - 1);  
-                if ((tileX & mask) != 0)  
-                {  
-                    digit++;  
-                }  
-                if ((tileY & mask) != 0)  
-                {  
-                    digit++;  
-                    digit++;  
-                }  
-                quadKey+=digit;  
-            }  
-            return quadKey;  
-        }  
-        public static  MapScale( latitude:number,  levelOfDetail:number,  screenDpi:number)  
-        {  
-            return this.GroundResolution(latitude, levelOfDetail) * screenDpi / 0.0254;  
-        }  
+    static TileXYToQuadKey(tileX: number, tileY: number, levelOfDetail: number) {
+        let quadKey = '';
+        for (let i = levelOfDetail; i > 0; i--) {
+            let digit = 0;
+            let mask = 1 << (i - 1);
+            if ((tileX & mask) != 0) {
+                digit++;
+            }
+            if ((tileY & mask) != 0) {
+                digit++;
+                digit++;
+            }
+            quadKey += digit;
+        }
+        return quadKey;
+    }
+    public static MapScale(latitude: number, levelOfDetail: number, screenDpi: number) {
+        return this.GroundResolution(latitude, levelOfDetail) * screenDpi / 0.0254;
+    }
 }
 EarthTool.EPSG3857_MAX_BOUND = 20037508.34,
     EarthTool.INV_POLE_BY_180 = 180 / EarthTool.EPSG3857_MAX_BOUND,
